@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Tell the browser it's a PWA -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <!-- Tell iOS it's a PWA -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <link rel="manifest" href="manifest.json">
+    <link rel="shortcut icon" href="favicon.ico">
+    <link rel="apple-touch-icon" sizes="512x512" href="icon-512x512.png">
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/site.css">
+    <title>Magib 8 Ball</title>
+</head>
+
+<body class="text-center">
+    <form id="myForm" class="form-signin">
+            <img class="mb-4" src="icon-512x512.png" alt="" width="72" height="72">
+        <h1 class="h3 mb-3 font-weight-normal">Ask Me Something</h1>
+        <input class="form-control" placeholder="" required autofocus/>
+        <h2 class=" m-3 font-weight-normal" id="answer"></h2>
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Ask the magic 8 ball</button>
+    </form>
+    <script src="assets/js/bootstrap.min.js"></script>
+    <script src="assets/js/jquery-3.3.1.slim.min.js"></script>
+    <script src="assets/js/popper.min.js"></script>
+    <script>
+
+        document.getElementById("myForm").addEventListener("submit", takeTurn);
+
+        function takeTurn(event = null) {
+            let aAnswers = ["outlook is good", "It's not in the cards", "definitely not", "don't count on it", "certainly"];
+            let nAnswer = Math.floor(Math.random() * aAnswers.length);
+            document.getElementById("answer").innerHTML = aAnswers[nAnswer];
+            if(event){
+                event.preventDefault();
+            }
+        }
+
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function () {
+                navigator.serviceWorker.register('worker.js').then(function (registration) {
+                    console.log('Worker registration successful', registration.scope);
+                }, function (err) {
+                    console.log('Worker registration failed', err);
+                }).catch(function (err) {
+                    console.log(err);
+                });
+            });
+        } else {
+            console.log('Service Worker is not supported by browser.');
+        }
+
+        if (typeof window.DeviceMotionEvent != 'undefined') {
+            // Shake sensitivity (a lower number is more)
+            var sensitivity = 20;
+
+            // Position variables
+            var x1 = 0, y1 = 0, z1 = 0, x2 = 0, y2 = 0, z2 = 0;
+
+            // Listen to motion events and update the position
+            window.addEventListener('devicemotion', function (e) {
+                x1 = e.accelerationIncludingGravity.x;
+                y1 = e.accelerationIncludingGravity.y;
+                z1 = e.accelerationIncludingGravity.z;
+            }, false);
+
+            // Periodically check the position and fire
+            // if the change is greater than the sensitivity
+            setInterval(function () {
+                var change = Math.abs(x1 - x2 + y1 - y2 + z1 - z2);
+
+                if (change > sensitivity) {
+                    //alert('Shake!');
+                    takeTurn();
+                }
+
+                // Update new position
+                x2 = x1;
+                y2 = y1;
+                z2 = z1;
+            }, 150);
+        }
+    </script>
+
+</body>
+
+</html>
